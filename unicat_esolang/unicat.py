@@ -35,17 +35,17 @@ def main():
     if len(sys.argv) != 2:
         sys.exit(-1)
 
-    instructions = compile(sys.argv[1])
-    execute(instructions)
+    instructions = compile_instructions(sys.argv[1])
+    execute_instructions(instructions)
 
 
-
-def compile(filename: str) -> List[tuple]:
+def compile_instructions(filename: str) -> List[tuple]:
     with open(filename, "r", encoding="utf-8") as f:
         program = f.read()
 
     byte_code = convert_to_byte_code(program)
     return parse_statements(byte_code)
+
 
 def convert_to_byte_code(program: str) -> str:
     return "".join(UNICAT_EMOJIS.get(ch, "") for ch in program)
@@ -54,7 +54,7 @@ def convert_to_byte_code(program: str) -> str:
 def parse_statements(byte_code: str) -> List[tuple]:
     instructions: List[tuple] = []
     byte_code_iter: Iterable[str] = iter(byte_code)
-    while (instruction := parse_statement(byte_code_iter)):
+    while instruction := parse_statement(byte_code_iter):
         instructions.append(instruction)
 
     return instructions
@@ -107,7 +107,7 @@ def parse_number(byte_code_iter: Iterable[str]) -> int:
         return 1337
 
 
-def execute(ins: List[tuple]):
+def execute_instructions(ins: List[tuple]):
     mem: Dict[int, int] = {}
     while True:
         mem[-1] = mem.get(-1, -1) + 1
