@@ -1,0 +1,48 @@
+[tool.poetry]
+name = "unicat-esolang"
+version = "0.1.0"
+description = "Python 3 Port of Unicat Esoteric Language. This is a fork of https://github.com/gemdude46/unicat"
+authors = ["rzuckerm"]
+license = "LICENSE.txt"
+readme = "README.md"
+homepage = "https://github.com/rzuckerm/unicat_esolang"
+packages = [{include = "unicat_esolang"}]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent"
+]
+
+[tool.poetry.urls]
+"Bug Tracker" = "https://github.com/rzuckerm/unicat_esolang/issues"
+
+[tool.poetry.dependencies]
+python = "^3.8"
+
+[tool.poetry.group.dev.dependencies]
+pytest = "^7.4.0"
+pytest-cov = "^4.1.0"
+coverage = "^7.3.0"
+coverage-badge = "^1.1.0"
+pylint = "^2.17.5"
+black = "^23.7.0"
+
+[tool.poetry.scripts]
+unicat = "unicat_esolang.unicat:main"
+
+[tool.pylint.format]
+max-line-length = 100
+
+[tool.pylint.message]
+disable = [
+    "missing-module-docstring",
+    "missing-function-docstring",
+    "too-many-branches",
+]
+
+[tool.pylint.basic]
+good-names = ["f", "k", "it"]
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
