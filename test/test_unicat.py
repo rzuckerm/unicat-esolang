@@ -93,6 +93,12 @@ def test_math(capsys):
     verify_unicat(capsys, "math.cat", expected_output)
 
 
+@patch("unicat_esolang.unicat.random.choice")
+def test_random(mock_randint, capsys):
+    mock_randint.side_effect = [1, 0, 0, 1]
+    verify_unicat(capsys, "random.cat", "TFFT\n")
+
+
 def verify_unicat(capsys, filename, expected_output):
     output = run_unicat(capsys, filename)
     assert output == expected_output

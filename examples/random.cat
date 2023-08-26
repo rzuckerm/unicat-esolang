@@ -1,0 +1,22 @@
+😻😹😸🙀🙀😹😸😾🙀🙀 Memory 0 = 0o106 (70 = 'F')
+😻😹😹🙀🙀😹😺😼🙀🙀 Memory 1 = 0o124 (84 = 'T')
+😻😹😺🙀🙀😹😺🙀🙀 Memory 2 = 0o12 (10 = '\n')
+
+🙀😻😻🙀🙀 Memory 3 = randomb
+😼😾😻🙀🙀 Memory 3 = pointer(Memory 3)
+😽😼😻🙀🙀 Output memory 3 (random 'F' or 'T')
+
+🙀😻😻🙀🙀 Memory 3 = randomb
+😼😾😻🙀🙀 Memory 3 = pointer(Memory 3)
+😽😼😻🙀🙀 Output memory 3 (random 'F' or 'T')
+
+🙀😻😻🙀🙀 Memory 3 = randomb
+😼😾😻🙀🙀 Memory 3 = pointer(Memory 3)
+😽😼😻🙀🙀 Output memory 3 (random 'F' or 'T')
+
+🙀😻😻🙀🙀 Memory 3 = randomb
+😼😾😻🙀🙀 Memory 3 = pointer(Memory 3)
+😽😼😻🙀🙀 Output memory 3 (random 'F' or 'T')
+
+😽😼😺🙀🙀 Output memory 2 ('\n')
+🙀🙀 Exit

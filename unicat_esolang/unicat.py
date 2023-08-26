@@ -122,7 +122,7 @@ def execute_instructions(ins: List[tuple]):
         if it[0] == "pointer":
             mem[it[1]] = mem.get(mem.get(it[1], 0), 0)
         elif it[0] == "randomb":
-            mem[it[1]] = random.randint(True, False)
+            mem[it[1]] = random.choice([0, 1])
         elif it[0] == "asgnlit":
             mem[it[1]] = it[2]
         elif it[0] == "jumpif>" and mem.get(it[1], 0) > 0:
