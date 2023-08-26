@@ -1,0 +1,86 @@
+name: Makefile CI
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+
+    - uses: actions/setup-python@v4
+      with:
+        python-version: "3.8"
+
+    - uses: snok/install-poetry@v1.3.3
+      with:
+        version: 1.6.1
+        virtualenvs-create: false
+        virtualenvs-in-project: false
+
+    - name: Lint
+      run: make lint
+
+  test:
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.8", "3.9", "3.10", "3.11"]
+        os: [ubuntu-latest, macos-latest]
+    runs-on: ${{ matrix.os }}
+
+    steps:
+    - uses: actions/checkout@v3
+
+    - uses: actions/setup-python@v4
+      with:
+        python-version: ${{ matrix.python-version }}
+
+    - uses: snok/install-poetry@v1.3.3
+      with:
+        version: 1.6.1
+        virtualenvs-create: false
+        virtualenvs-in-project: false
+
+    - name: Test
+      run: make test
+
+  doc:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+
+    - uses: actions/setup-python@v4
+      with:
+        python-version: "3.8"
+
+    - uses: snok/install-poetry@v1.3.3
+      with:
+        version: 1.6.1
+        virtualenvs-create: false
+        virtualenvs-in-project: false
+
+    - name: Test
+      run: make test
+
+    - name: Coverage Badge
+      run: make coverage-badge
+
+    - name: Copy code coverage
+      run: mkdir -p .meta/doc && cp -r .meta/html_cov .meta/doc
+
+    - name: Move coverage badge
+      run: mv .meta/html_cov/badge.svg .meta/doc
+
+    - name: Publish doc
+      uses: JamesIves/github-pages-deploy-action@v4
+      with:
+        folder: .meta/doc
+        token: ${{ secrets.REPO_TOKEN }}
+      if: ${{ github.ref == 'refs/heads/main' }}
