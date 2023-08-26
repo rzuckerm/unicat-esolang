@@ -27,7 +27,7 @@ MNEMONICS = {
 APPLOPS = {
     "2": "-",
     "8": "*",
-    "7": "-",
+    "7": "/",
 }
 
 
@@ -132,7 +132,7 @@ def execute_instructions(ins: List[tuple]):
         elif it[0] == "applop-":
             mem[it[1]] = mem.get(it[1], 0) - mem.get(it[2], 0)
         elif it[0] == "applop/":
-            mem[it[1]] = mem.get(it[1], 0) / mem.get(it[2], 0)
+            mem[it[1]] = mem.get(it[1], 0) // mem.get(it[2], 0)
         elif it[0] == "applop*":
             mem[it[1]] = mem.get(it[1], 0) * mem.get(it[2], 0)
         elif it[0] == "echovar":
