@@ -155,12 +155,12 @@ See https://docs.python.org/3/library/pdb.html for details.
                 f"Current instruction:\nAddress {decode_value(mem[-1])}: "
                 + disassemble_instruction(it)
             )
-            print(f"Memory:")
+            print("Memory:")
             for address, value in mem.items():
                 print(f"{decode_value(address)}: {decode_value(value, True)}")
 
             try:
-                breakpoint()
+                breakpoint()  # pylint: disable=forgotten-debug-statement
             except BdbQuit:
                 return
 

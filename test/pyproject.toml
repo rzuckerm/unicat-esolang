@@ -6,3 +6,6 @@ disable = [
     "missing-module-docstring",
     "missing-function-docstring"
 ]
+
+[tool.pylint.basic]
+good-names = ["f"]
