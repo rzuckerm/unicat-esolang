@@ -141,6 +141,8 @@ def execute_instructions(ins: List[tuple]):
             sys.stdout.write(str(mem.get(it[1], 0)))
         elif it[0] == "inputst":
             inp = sys.stdin.readline()
-            for k in range(it[1], it[1] + len(inp)):
+            end_index = it[1] + len(inp)
+            for k in range(it[1], end_index):
                 mem[k] = ord(inp[k - it[1]])
-            mem[k + 1] = 0
+
+            mem[end_index] = 0

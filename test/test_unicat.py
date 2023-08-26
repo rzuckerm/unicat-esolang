@@ -99,6 +99,18 @@ def test_random(mock_randint, capsys):
     verify_unicat(capsys, "random.cat", "TFFT\n")
 
 
+@pytest.mark.parametrize(
+    "input_string,expected_output", [
+        ("", ""),
+        ("Hello, World!\n", "!dlroW ,olleH"),
+    ]
+)
+@patch("unicat_esolang.unicat.sys.stdin.readline")
+def test_reverse_string(mock_readline, input_string, expected_output, capsys):
+    mock_readline.return_value = f"{input_string}"
+    verify_unicat(capsys, "reverse-string.cat", f"{expected_output}\n")
+
+
 def verify_unicat(capsys, filename, expected_output):
     output = run_unicat(capsys, filename)
     assert output == expected_output

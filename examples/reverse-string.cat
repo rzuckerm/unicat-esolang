@@ -1,0 +1,27 @@
+# Find end of input
+0o00 😺😼😹😺🙀🙀 Memory 10 (0o12) through N+11 = input (N characters), newline, null
+0o01 😻😹😸🙀🙀😹😺🙀🙀 Memory 0 = 0o12 (10 = '\n')
+0o02 😻😹😹🙀🙀😹😺🙀🙀 Memory 1 = 0o12 (10, input pointer)
+0o03 😻😹😺🙀🙀😹🙀🙀 Memory 2 = 1
+0o04 😻😹😻🙀🙀😸🙀🙀 Memory 3 = 0
+0o05 😿🙀😸😻🙀🙀😹🙀🙀 Memory 3 += Memory 1 (input pointer)
+0o06 😼😾😻🙀🙀 Memory 3 = pointer(Memory 3) (contents of input pointer)
+0o07 😽😿😻🙀🙀😹😸🙀🙀 If Memory 3 > 0, jump to 0o11 (0o10 + 1)
+0o10 😻😹😹🙀😿😹😺🙀🙀 Jump to 0o13 (0o12 + 1)
+0o11 😿🙀😸😹🙀🙀😺🙀🙀 Memory 1 += Memory 2 (1) (increment input pointer)
+0o12 😻😹😹🙀😿😻🙀🙀 Jump to 0o04 (0o03 + 1)
+
+# Null-terminate before input
+0o13 😻😹😹😹🙀🙀😸😸🙀🙀 Memory 9 (0o11) = 0
+0o14 😿🙀😺😹🙀🙀😺🙀🙀 Memory 1 -= Memory 2 (1) (decrement input pointer, skip newline)
+
+# Output reversed string starting before newline until beginning null
+0o15 😿🙀😺😹🙀🙀😺🙀🙀 Memory 1 -= Memory 2 (1) (decrement input pointer)
+0o16 😻😹😻🙀🙀😸🙀🙀 Memory 3 = 0
+0o17 😿🙀😸😻🙀🙀😹🙀🙀 Memory 3 += Memory 1 (input pointer)
+0o20 😼😾😻🙀🙀 Memory 3 = pointer(Memory 3) (contents of input pointer)
+0o21 😽😿😻🙀🙀😺😻🙀🙀 If Memory 3 > 0, jump to 0o24 (0o23 + 1)
+0o22 😽😼😸🙀🙀 Output Memory 0 ('\n')
+0o23 🙀🙀 Exit
+0o24 😽😼😻🙀🙀 Output Memory 3 (contents of input pointer)
+0o25 😻😹😹🙀😿😹😼🙀🙀 Jump to 0o15 (0o14 + 1)
