@@ -80,7 +80,7 @@ def test_bad_args():
 
 
 def test_hello_world(capsys):
-    verify_unicat(capsys, "hello-world.cat", "Hello, World!\n")
+    verify_unicat(capsys, "hello-world.cat", "Hello, World!")
 
 
 def test_math(capsys):
@@ -96,23 +96,29 @@ def test_math(capsys):
 @patch("unicat_esolang.unicat.random.choice")
 def test_random(mock_randint, capsys):
     mock_randint.side_effect = [1, 0, 0, 1]
-    verify_unicat(capsys, "random.cat", "TFFT\n")
+    verify_unicat(capsys, "random.cat", "TFFT")
 
 
 @pytest.mark.parametrize(
-    "input_string,expected_output", [
+    "input_string,expected_output",
+    [
         ("", ""),
         ("Hello, World!\n", "!dlroW ,olleH"),
-    ]
+    ],
 )
 @patch("unicat_esolang.unicat.sys.stdin.readline")
 def test_reverse_string(mock_readline, input_string, expected_output, capsys):
     mock_readline.return_value = f"{input_string}"
-    verify_unicat(capsys, "reverse-string.cat", f"{expected_output}\n")
+    verify_unicat(capsys, "reverse-string.cat", expected_output)
+
+
+def test_bad_jump(capsys):
+    verify_unicat(capsys, "bad-jump.cat", "x")
 
 
 def verify_unicat(capsys, filename, expected_output):
     output = run_unicat(capsys, filename)
+    expected_output = expected_output.strip() + "\n"
     assert output == expected_output
 
 
