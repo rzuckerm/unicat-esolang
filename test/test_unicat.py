@@ -1,5 +1,6 @@
 from unittest.mock import patch
 from bdb import BdbQuit
+import sys
 
 import pytest
 
@@ -116,6 +117,70 @@ def test_reverse_string(mock_readline, input_string, expected_output, capsys):
 
 def test_bad_jump(capsys):
     verify_unicat(capsys, "bad-jump.cat", "x")
+
+
+@pytest.mark.parametrize(
+    "value,show_ascii,expected_output",
+    [
+        (-1, False, "-1 (-0o1)"),
+        (-1, True, "-1 (-0o1)"),
+        (0, False, "0 (0o0)"),
+        (0, True, "0 (0o0 = '\\x00')"),
+        (1, False, "1 (0o1)"),
+        (1, True, "1 (0o1 = '\\x01')"),
+        (8, False, "8 (0o10)"),
+        (8, True, "8 (0o10 = '\\x08')"),
+        (9, False, "9 (0o11)"),
+        (9, True, "9 (0o11 = '\\t')"),
+        (10, False, "10 (0o12)"),
+        (10, True, "10 (0o12 = '\\n')"),
+        (13, False, "13 (0o15)"),
+        (13, True, "13 (0o15 = '\\r')"),
+        (72, False, "72 (0o110)"),
+        (72, True, "72 (0o110 = 'H')"),
+        (127, False, "127 (0o177)"),
+        (127, True, "127 (0o177 = '\\x7f')"),
+        (128576, False, "128576 (0o373100)"),
+        (128576, True, "128576 (0o373100 = '🙀')"),
+        (
+            sys.maxunicode + 1,
+            False,
+            f"{sys.maxunicode + 1} ({oct(sys.maxunicode + 1)})",
+        ),
+        (
+            sys.maxunicode + 1,
+            True,
+            f"{sys.maxunicode + 1} ({oct(sys.maxunicode + 1)})",
+        ),
+    ],
+)
+def test_decode_value(value, show_ascii, expected_output):
+    output = unicat.decode_value(value, show_ascii=show_ascii)
+    assert output == expected_output
+
+
+@pytest.mark.parametrize(
+    "instruction,expected_output",
+    [
+        pytest.param(
+            ("asgnlit", 13, 55), "asgnlit 13 (0o15), 55 (0o67 = '7')", id="asgnlit"
+        ),
+        pytest.param(("jumpif>", 5, 101), "jumpif> 5 (0o5), 101 (0o145)", id="jumpif>"),
+        pytest.param(("echovar", 33), "echovar 33 (0o41)", id="echovar"),
+        pytest.param(("echoval", 92), "echoval 92 (0o134)", id="echoval"),
+        pytest.param(("pointer", 18), "pointer 18 (0o22)", id="pointer"),
+        pytest.param(("randomb", 37), "randomb 37 (0o45)", id="randomb"),
+        pytest.param(("inputst", 19), "inputst 19 (0o23)", id="inputst"),
+        pytest.param(("applop+", 1, 5), "applop+ 1 (0o1), 5 (0o5)", id="applop+"),
+        pytest.param(("applop-", 7, 14), "applop- 7 (0o7), 14 (0o16)", id="applop-"),
+        pytest.param(("applop*", 23, 45), "applop* 23 (0o27), 45 (0o55)", id="applop*"),
+        pytest.param(("applop/", 6, 3), "applop/ 6 (0o6), 3 (0o3)", id="applop/"),
+        pytest.param(("diepgrm",), "diepgrm", id="diepgrm"),
+    ],
+)
+def test_disassemble_instruction(instruction, expected_output):
+    output = unicat.disassemble_instruction(instruction)
+    assert output == expected_output
 
 
 @pytest.mark.parametrize("option", ["-d", "--debug"])

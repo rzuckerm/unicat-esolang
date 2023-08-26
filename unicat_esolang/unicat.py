@@ -33,7 +33,7 @@ APPLOPS = {
 }
 DISASSEMBLY = {
     "asgnlit": (False, True),
-    "jumpif>": {False, False},
+    "jumpif>": (False, False),
     "echovar": (False,),
     "echoval": (False,),
     "pointer": (False,),
@@ -198,8 +198,11 @@ See https://docs.python.org/3/library/pdb.html for details.
 
 def decode_value(value: int, show_ascii=False):
     value_str = f"{value} ({oct(value)}"
-    if show_ascii and value >= 0:
-        value_str += f" = '{chr(value)}'"
+    if show_ascii:
+        try:
+            value_str += f" = {repr(chr(value))}"
+        except (ValueError, OverflowError):
+            pass
 
     return f"{value_str})"
 
