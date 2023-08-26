@@ -1,5 +1,5 @@
 from unittest.mock import patch
-import sys
+from bdb import BdbQuit
 
 import pytest
 
@@ -75,8 +75,8 @@ def test_parse_statement(byte_code, expected_instruction):
 
 
 def test_bad_args():
-    with patch.object(sys, "argv", ["unicat"]), pytest.raises(SystemExit):
-        unicat.main()
+    with pytest.raises(SystemExit):
+        unicat.main([])
 
 
 def test_hello_world(capsys):
@@ -104,16 +104,35 @@ def test_random(mock_randint, capsys):
     [
         ("", ""),
         ("Hello, World!\n", "!dlroW ,olleH"),
+        ("\n", ""),
+        ("Meow, World", "dlroW ,woeM"),
     ],
 )
 @patch("unicat_esolang.unicat.sys.stdin.readline")
 def test_reverse_string(mock_readline, input_string, expected_output, capsys):
-    mock_readline.return_value = f"{input_string}"
+    mock_readline.return_value = input_string
     verify_unicat(capsys, "reverse-string.cat", expected_output)
 
 
 def test_bad_jump(capsys):
     verify_unicat(capsys, "bad-jump.cat", "x")
+
+
+@pytest.mark.parametrize("option", ["-d", "--debug"])
+@patch("builtins.breakpoint")
+def test_debug(mock_breakpoint, option, capsys):
+    with open("examples/hello-world.cat", "r", encoding="utf-8") as f:
+        contents = f.read()
+
+    num_lines = len([line for line in contents.splitlines() if line.strip()])
+    mock_breakpoint.side_effect = [None] * (num_lines - 1) + [BdbQuit()]
+
+    output = run_unicat(capsys, "hello-world.cat", [option])
+
+    assert "Welcome" in output
+    assert "asgnlit 0 (0o0), 72 (0o110 = 'H')" in output
+    assert "echovar 0 (0o0)" in output
+    assert "diepgrm" in output
 
 
 def verify_unicat(capsys, filename, expected_output):
@@ -122,8 +141,9 @@ def verify_unicat(capsys, filename, expected_output):
     assert output == expected_output
 
 
-def run_unicat(capsys, filename):
-    with patch.object(sys, "argv", ["unicat", f"examples/{filename}"]):
-        unicat.main()
+def run_unicat(capsys, filename, options=None):
+    if not options:
+        options = []
 
+    unicat.main([f"examples/{filename}"] + options)
     return capsys.readouterr().out

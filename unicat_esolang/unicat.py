@@ -1,6 +1,8 @@
 from typing import List, Iterable, Dict
 import sys
 import random
+import argparse
+from bdb import BdbQuit
 
 UNICAT_EMOJIS = {
     "😸": "0",
@@ -29,14 +31,30 @@ APPLOPS = {
     "8": "*",
     "7": "/",
 }
+DISASSEMBLY = {
+    "asgnlit": (False, True),
+    "jumpif>": {False, False},
+    "echovar": (False,),
+    "echoval": (False,),
+    "pointer": (False,),
+    "randomb": (False,),
+    "inputst": (False,),
+    "applop+": (False, False),
+    "applop-": (False, False),
+    "applop*": (False, False),
+    "applop/": (False, False),
+    "diepgrm": (),
+}
 
 
-def main():
-    if len(sys.argv) != 2:
-        sys.exit(-1)
+def main(argv=None):
+    parser = argparse.ArgumentParser()
+    parser.add_argument("-d", "--debug", action="store_true", help="Debug")
+    parser.add_argument("filename", help="Name of unicat file to execute")
+    parsed_args = parser.parse_args(argv)
 
-    instructions = compile_instructions(sys.argv[1])
-    execute_instructions(instructions)
+    instructions = compile_instructions(parsed_args.filename)
+    execute_instructions(instructions, parsed_args.debug)
 
 
 def compile_instructions(filename: str) -> List[tuple]:
@@ -107,7 +125,23 @@ def parse_number(byte_code_iter: Iterable[str]) -> int:
         return 1337
 
 
-def execute_instructions(ins: List[tuple]):
+def execute_instructions(ins: List[tuple], debug: bool = False):
+    if debug:
+        print(
+            """\
+Welcome to the Unicat debugger
+
+Here are the commands:
+
+- ins      - Show instructions
+- mem      - Show all memory
+- mem[<n>] - Show memory address <n>
+- c        - Execute next instruction
+
+Everything else is just a pdb command.
+See https://docs.python.org/3/library/pdb.html for details.
+"""
+        )
     mem: Dict[int, int] = {}
     while True:
         mem[-1] = mem.get(-1, -1) + 1
@@ -115,6 +149,20 @@ def execute_instructions(ins: List[tuple]):
             it = ins[mem[-1]]
         except IndexError:
             it = ("asgnlit", -1, -1)
+
+        if debug:
+            print(
+                f"Current instruction:\nAddress {decode_value(mem[-1])}: "
+                + disassemble_instruction(it)
+            )
+            print(f"Memory:")
+            for address, value in mem.items():
+                print(f"{decode_value(address)}: {decode_value(value, True)}")
+
+            try:
+                breakpoint()
+            except BdbQuit:
+                return
 
         if it[0] == "diepgrm":
             return
@@ -146,3 +194,20 @@ def execute_instructions(ins: List[tuple]):
                 mem[k] = ord(inp[k - it[1]])
 
             mem[end_index] = 0
+
+
+def decode_value(value: int, show_ascii=False):
+    value_str = f"{value} ({oct(value)}"
+    if show_ascii and value >= 0:
+        value_str += f" = '{chr(value)}'"
+
+    return f"{value_str})"
+
+
+def disassemble_instruction(instruction: tuple):
+    instruction_list = [instruction[0]]
+    instruction_list += [
+        decode_value(operand, show_ascii=show_ascii)
+        for operand, show_ascii in zip(instruction[1:], DISASSEMBLY[instruction[0]])
+    ] or []
+    return ", ".join(instruction_list).replace(",", "", 1)
