@@ -80,8 +80,26 @@ def test_bad_args():
 
 
 def test_hello_world(capsys):
-    with patch.object(sys, "argv", ["unicat", "examples/hello-world.cat"]):
+    verify_unicat(capsys, "hello-world.cat", "Hello, World!\n")
+
+
+def test_math(capsys):
+    expected_output = """\
+42+23=65
+27-72=-45
+61*18=1098
+107/13=8
+"""
+    verify_unicat(capsys, "math.cat", expected_output)
+
+
+def verify_unicat(capsys, filename, expected_output):
+    output = run_unicat(capsys, filename)
+    assert output == expected_output
+
+
+def run_unicat(capsys, filename):
+    with patch.object(sys, "argv", ["unicat", f"examples/{filename}"]):
         unicat.main()
 
-    output = capsys.readouterr().out
-    assert output == "Hello, World!\n"
+    return capsys.readouterr().out
