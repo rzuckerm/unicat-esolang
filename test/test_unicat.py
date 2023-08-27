@@ -119,6 +119,10 @@ def test_bad_jump(capsys):
     verify_unicat(capsys, "bad-jump.cat", "x")
 
 
+def test_bad_output(capsys):
+    verify_unicat(capsys, "bad-char.cat", "")
+
+
 @pytest.mark.parametrize(
     "value,show_ascii,expected_output",
     [

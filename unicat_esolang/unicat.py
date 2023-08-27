@@ -184,7 +184,10 @@ See https://docs.python.org/3/library/pdb.html for details.
         elif it[0] == "applop*":
             mem[it[1]] = mem.get(it[1], 0) * mem.get(it[2], 0)
         elif it[0] == "echovar":
-            sys.stdout.write(chr(mem.get(it[1], 0)))
+            try:
+                sys.stdout.write(chr(mem.get(it[1], 0)))
+            except ValueError:
+                pass
         elif it[0] == "echoval":
             sys.stdout.write(str(mem.get(it[1], 0)))
         elif it[0] == "inputst":
@@ -201,7 +204,7 @@ def decode_value(value: int, show_ascii=False):
     if show_ascii:
         try:
             value_str += f" = {repr(chr(value))}"
-        except (ValueError, OverflowError):
+        except ValueError:
             pass
 
     return f"{value_str})"
