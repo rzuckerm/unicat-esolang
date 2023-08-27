@@ -189,11 +189,10 @@ See https://docs.python.org/3/library/pdb.html for details.
             sys.stdout.write(str(mem.get(it[1], 0)))
         elif it[0] == "inputst":
             inp = sys.stdin.readline()
-            end_index = it[1] + len(inp)
-            for k in range(it[1], end_index):
-                mem[k] = ord(inp[k - it[1]])
+            for k, ch in enumerate(inp, start=it[1]):
+                mem[k] = ord(ch)
 
-            mem[end_index] = 0
+            mem[it[1] + len(inp)] = 0
 
 
 def decode_value(value: int, show_ascii=False):
