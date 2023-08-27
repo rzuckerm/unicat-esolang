@@ -13,10 +13,19 @@ See TBD for a description of the language.
 
 Python 3.8 or later
 
-## Installing
+## Installing or Updating
+
+This package has no dependencies, so it is safe to do this:
 
 ```
-pip install --user esocat-lang
+pip install --user -U esocat-lang
+```
+
+However, if you want to install this is in virtualenv, you can do this once
+you have activated the virtualenv:
+
+```
+pip install -U esocat-lang
 ```
 
 ## Usage
