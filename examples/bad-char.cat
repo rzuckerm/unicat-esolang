@@ -1,9 +1,0 @@
-# This program tests what happens when a bad character is output
-
-😻😹😸🙀🙀😹🙀😿 Memory 0 = -1
-😽😼😸🙀🙀 Output memory 0 (should not crash or output anything)
-😻😹😸🙀🙀😿😻😼😾😽😼😽😸😸😸🙀🙀 Memory 0 = 1000000000 (0o7346545000)
-😽😼😸🙀🙀 Output memory 0 (should not crash or output anything)
-😻😹😸🙀🙀😹😺🙀🙀 Memory 0 = 10 (0o12 = '\n')
-😽😼😸🙀🙀 Output memory 0
-🙀🙀 Exit
