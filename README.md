@@ -30,7 +30,8 @@ pip install -U esocat-lang
 
 ## Usage
 
-Use this 
+Use this to run program:
+
 ```
 unicat [-d/--debug] FILENAME
 ```
