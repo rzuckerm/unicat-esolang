@@ -41,7 +41,7 @@ disable = [
 ]
 
 [tool.pylint.basic]
-good-names = ["f", "k", "it"]
+good-names = ["ch", "f", "k", "it"]
 
 [build-system]
 requires = ["poetry-core"]

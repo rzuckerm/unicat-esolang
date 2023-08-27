@@ -84,14 +84,15 @@ def test_hello_world(capsys):
     verify_unicat(capsys, "hello-world.cat", "Hello, World!")
 
 
-def test_math(capsys):
-    expected_output = """\
-42+23=65
-27-72=-45
-61*18=1098
-107/13=8
-"""
-    verify_unicat(capsys, "math.cat", expected_output)
+def test_fizz_buzz(capsys):
+    expected_output = ""
+    for n in range(1, 101):
+        line = "Fizz" if n % 3 == 0 else ""
+        line += "Buzz" if n % 5 == 0 else ""
+        line += "" if line else str(n)
+        expected_output += f"{line}\n"
+
+    verify_unicat(capsys, "fizz-buzz.cat", expected_output)
 
 
 @patch("unicat_esolang.unicat.random.choice")

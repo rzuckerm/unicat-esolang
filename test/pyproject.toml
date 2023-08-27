@@ -8,4 +8,4 @@ disable = [
 ]
 
 [tool.pylint.basic]
-good-names = ["f"]
+good-names = ["f", "n"]
