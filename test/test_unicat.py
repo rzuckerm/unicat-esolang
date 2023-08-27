@@ -189,7 +189,13 @@ def test_debug(mock_breakpoint, option, capsys):
     with open("examples/hello-world.cat", "r", encoding="utf-8") as f:
         contents = f.read()
 
-    num_lines = len([line for line in contents.splitlines() if line.strip()])
+    num_lines = len(
+        [
+            line
+            for line in contents.splitlines()
+            if line.strip() and not line.startswith("#")
+        ]
+    )
     mock_breakpoint.side_effect = [None] * (num_lines - 1) + [BdbQuit()]
 
     output = run_unicat(capsys, "hello-world.cat", [option])
