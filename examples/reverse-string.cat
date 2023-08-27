@@ -1,4 +1,8 @@
-# Find end of input
+# This program tests out the input instruction. It outputs the string in
+# reverse with a newline. For example, if "Hello\n" is input, "olleH\n"
+# is output
+
+# Find end of input by finding null-termination
 0o00 😺😼😹😺🙀🙀 Memory 10 (0o12) through N+11 = input (N characters), newline, null
 0o01 😻😹😸🙀🙀😹😺🙀🙀 Memory 0 = 0o12 (10 = '\n')
 0o02 😻😹😹🙀🙀😹😺🙀🙀 Memory 1 = 0o12 (10, input pointer)
@@ -25,7 +29,8 @@
 0o23 😽😿😻🙀🙀😺😼🙀🙀 If Memory 3 > 0, jump to 0o25 (0o24 + 1) (if '\n' > contents of input pointer)
 0o24 😿🙀😺😹🙀🙀😺🙀🙀 Memory 1 -= Memory 2 (1) (decrement input pointer)
 
-# Output reversed string starting before newline (if present) until beginning null
+# Output reversed string starting before newline (if present) until beginning
+# null-termination is found, then output a newline
 0o25 😿🙀😺😹🙀🙀😺🙀🙀 Memory 1 -= Memory 2 (1) (decrement input pointer)
 0o26 😻😹😻🙀🙀😸🙀🙀 Memory 3 = 0
 0o27 😿🙀😸😻🙀🙀😹🙀🙀 Memory 3 += Memory 1 (input pointer)
