@@ -63,7 +63,7 @@ Memory:
 -> if it[0] == "diepgrm":
 ```
 
-### Examples
+## Examples
 
 Example programs can be found [here](https://github.com/rzuckerm/unicat-esolang/tree/main/examples).
 These programs are also used for unit testing the Unicat language
