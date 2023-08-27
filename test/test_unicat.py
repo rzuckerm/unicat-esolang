@@ -95,6 +95,16 @@ def test_fizz_buzz(capsys):
     verify_unicat(capsys, "fizz-buzz.cat", expected_output)
 
 
+def test_baklava(capsys):
+    expected_output = ""
+    for n in range(-10, 11):
+        num_spaces = abs(n)
+        num_stars = 21 - 2 * num_spaces
+        expected_output += " " * num_spaces + "*" * num_stars + "\n"
+
+    verify_unicat(capsys, "baklava.cat", expected_output)
+
+
 @patch("unicat_esolang.unicat.random.choice")
 def test_random(mock_randint, capsys):
     mock_randint.side_effect = [1, 0, 0, 1]
@@ -209,7 +219,9 @@ def test_debug(mock_breakpoint, option, capsys):
 
 def verify_unicat(capsys, filename, expected_output):
     output = run_unicat(capsys, filename)
-    expected_output = expected_output.strip() + "\n"
+    if not expected_output.endswith("\n"):
+        expected_output += "\n"
+
     assert output == expected_output
 
 
