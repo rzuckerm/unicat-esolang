@@ -105,6 +105,20 @@ def test_baklava(capsys):
     verify_unicat(capsys, "baklava.cat", expected_output)
 
 
+@pytest.mark.parametrize(
+    "input_string,expected_output",
+    [
+        ("\n", "0"),
+        ("1234567890\n", "1234567890"),
+        ("357/\n", "357"),
+        ("1248:\n", "1248"),
+    ],
+)
+def test_input_number(input_string, expected_output, mock_readline, capsys):
+    mock_readline.return_value = input_string
+    verify_unicat(capsys, "input-number.cat", expected_output)
+
+
 @patch("unicat_esolang.unicat.random.choice")
 def test_random(mock_randint, capsys):
     mock_randint.side_effect = [1, 0, 0, 1]
@@ -120,8 +134,7 @@ def test_random(mock_randint, capsys):
         ("Meow, World", "dlroW ,woeM"),
     ],
 )
-@patch("unicat_esolang.unicat.sys.stdin.readline")
-def test_reverse_string(mock_readline, input_string, expected_output, capsys):
+def test_reverse_string(input_string, expected_output, mock_readline, capsys):
     mock_readline.return_value = input_string
     verify_unicat(capsys, "reverse-string.cat", expected_output)
 
@@ -231,3 +244,9 @@ def run_unicat(capsys, filename, options=None):
 
     unicat.main([f"examples/{filename}"] + options)
     return capsys.readouterr().out
+
+
+@pytest.fixture()
+def mock_readline():
+    with patch("unicat_esolang.unicat.sys.stdin.readline") as mock:
+        yield mock
