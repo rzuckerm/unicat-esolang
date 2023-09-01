@@ -1,4 +1,4 @@
-from typing import List, Iterable, Dict
+from typing import List, Iterable, Dict, Optional
 import sys
 import random
 import argparse
@@ -45,6 +45,36 @@ DISASSEMBLY = {
     "applop/": (False, False),
     "diepgrm": (),
 }
+
+
+class Debug:
+    def __init__(self):
+        self.ins: List[tuple] = {}
+        self.mem: Dict[int, int]
+
+    def show_ins(self):
+        for address, it in enumerate(self.ins):
+            print(f"{decode_value(address)}: {disassemble_instruction(it)}")
+
+    def show_mem(self, start: Optional[int] = None, end: Optional[int] = None):
+        if start is None:
+            for address, value in sorted(self.mem.items()):
+                _show_value(address, value)
+        elif end is None:
+            _show_value(start, self.mem.get(start, 0))
+        else:
+            for address in range(start, end + 1):
+                if address in self.mem:
+                    _show_value(start, self.mem[address])
+
+
+def _show_value(address: int, value: int):
+    print(f"{decode_value(address)}: {decode_value(value, show_ascii=True)}")
+
+
+DEBUG = Debug()
+show_ins = DEBUG.show_ins
+show_mem = DEBUG.show_mem
 
 
 def main(argv=None):
@@ -126,6 +156,7 @@ def parse_number(byte_code_iter: Iterable[str]) -> int:
 
 
 def execute_instructions(ins: List[tuple], debug: bool = False):
+    mem: Dict[int, int] = {-1: -1}
     if debug:
         print(
             """\
@@ -133,66 +164,66 @@ Welcome to the Unicat debugger
 
 Here are the commands:
 
-- ins      - Show instructions
-- mem      - Show all memory
-- mem[<n>] - Show memory address <n>
-- c        - Execute next instruction
+- show_ins()           - Show instructions
+- show_mem()           - Show all memory
+- show_mem(start)      - Show memory address <start>
+- show_mem(start, end) - Show memory address <start> to <end>
+- c                    - Execute next instruction
 
 Everything else is just a pdb command.
 See https://docs.python.org/3/library/pdb.html for details.
 """
         )
-    mem: Dict[int, int] = {}
+
+        DEBUG.mem = mem
+        DEBUG.ins = ins
+
     while True:
-        mem[-1] = mem.get(-1, -1) + 1
         try:
-            it = ins[mem[-1]]
-        except IndexError:
-            it = ("asgnlit", -1, -1)
-
-        if debug:
-            print(
-                f"Current instruction:\nAddress {decode_value(mem[-1])}: "
-                + disassemble_instruction(it)
-            )
-            print("Memory:")
-            for address, value in mem.items():
-                print(f"{decode_value(address)}: {decode_value(value, True)}")
-
+            mem[-1] += 1
             try:
+                it = ins[mem[-1]]
+            except IndexError:
+                it = ("asgnlit", -1, -1)
+
+            if debug:
+                print(
+                    f"Current instruction:\nAddress {decode_value(mem[-1])}: "
+                    + disassemble_instruction(it)
+                )
                 breakpoint()  # pylint: disable=forgotten-debug-statement
-            except BdbQuit:
+
+            if it[0] == "diepgrm":
                 return
 
-        if it[0] == "diepgrm":
+            if it[0] == "pointer":
+                mem[it[1]] = mem.get(mem.get(it[1], 0), 0)
+            elif it[0] == "randomb":
+                mem[it[1]] = random.choice([0, 1])
+            elif it[0] == "asgnlit":
+                mem[it[1]] = it[2]
+            elif it[0] == "jumpif>" and mem.get(it[1], 0) > 0:
+                mem[-1] = it[2]
+            elif it[0] == "applop+":
+                mem[it[1]] = mem.get(it[1], 0) + mem.get(it[2], 0)
+            elif it[0] == "applop-":
+                mem[it[1]] = mem.get(it[1], 0) - mem.get(it[2], 0)
+            elif it[0] == "applop/":
+                mem[it[1]] = mem.get(it[1], 0) // mem.get(it[2], 0)
+            elif it[0] == "applop*":
+                mem[it[1]] = mem.get(it[1], 0) * mem.get(it[2], 0)
+            elif it[0] == "echovar":
+                sys.stdout.write(chr(mem.get(it[1], 0)))
+            elif it[0] == "echoval":
+                sys.stdout.write(str(mem.get(it[1], 0)))
+            elif it[0] == "inputst":
+                inp = sys.stdin.readline()
+                for k, ch in enumerate(inp, start=it[1]):
+                    mem[k] = ord(ch)
+
+                mem[it[1] + len(inp)] = 0
+        except BdbQuit:
             return
-
-        if it[0] == "pointer":
-            mem[it[1]] = mem.get(mem.get(it[1], 0), 0)
-        elif it[0] == "randomb":
-            mem[it[1]] = random.choice([0, 1])
-        elif it[0] == "asgnlit":
-            mem[it[1]] = it[2]
-        elif it[0] == "jumpif>" and mem.get(it[1], 0) > 0:
-            mem[-1] = it[2]
-        elif it[0] == "applop+":
-            mem[it[1]] = mem.get(it[1], 0) + mem.get(it[2], 0)
-        elif it[0] == "applop-":
-            mem[it[1]] = mem.get(it[1], 0) - mem.get(it[2], 0)
-        elif it[0] == "applop/":
-            mem[it[1]] = mem.get(it[1], 0) // mem.get(it[2], 0)
-        elif it[0] == "applop*":
-            mem[it[1]] = mem.get(it[1], 0) * mem.get(it[2], 0)
-        elif it[0] == "echovar":
-            sys.stdout.write(chr(mem.get(it[1], 0)))
-        elif it[0] == "echoval":
-            sys.stdout.write(str(mem.get(it[1], 0)))
-        elif it[0] == "inputst":
-            inp = sys.stdin.readline()
-            for k, ch in enumerate(inp, start=it[1]):
-                mem[k] = ord(ch)
-
-            mem[it[1] + len(inp)] = 0
 
 
 def decode_value(value: int, show_ascii=False):

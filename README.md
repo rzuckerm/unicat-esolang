@@ -51,10 +51,11 @@ Welcome to the Unicat debugger
 
 Here are the commands:
 
-- ins      - Show instructions
-- mem      - Show all memory
-- mem[<n>] - Show memory address <n>
-- c        - Execute next instruction
+- show_ins()           - Show instructions
+- show_mem()           - Show all memory
+- show_mem(start)      - Show memory address `<start>`
+- show_mem(start, end) - Show memory address `<start>` to `<end>`
+- c                    - Execute next instruction
 
 Everything else is just a pdb command.
 See https://docs.python.org/3/library/pdb.html for details.

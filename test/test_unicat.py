@@ -230,6 +230,90 @@ def test_debug(mock_breakpoint, option, capsys):
     assert "diepgrm" in output
 
 
+def test_debug_show_instructions(capsys):
+    unicat.DEBUG.ins = [
+        ("asgnlit", 12, 22),
+        ("jumpif>", 5, 74),
+        ("echovar", 15),
+        ("echoval", 18),
+        ("pointer", 44),
+        ("randomb", 17),
+        ("inputst", 25),
+        ("applop+", 3, 9),
+        ("applop-", 64, 46),
+        ("applop*", 17, 24),
+        ("applop/", 8, 7),
+        ("diepgrm",),
+    ]
+    unicat.DEBUG.show_ins()
+
+    output = capsys.readouterr().out
+    assert "0 (0o0): asgnlit 12 (0o14), 22 (0o26 = '\\x16')\n" in output
+    assert "1 (0o1): jumpif> 5 (0o5), 74 (0o112)\n" in output
+    assert "2 (0o2): echovar 15 (0o17)\n" in output
+    assert "3 (0o3): echoval 18 (0o22)\n" in output
+    assert "4 (0o4): pointer 44 (0o54)\n" in output
+    assert "5 (0o5): randomb 17 (0o21)\n" in output
+    assert "6 (0o6): inputst 25 (0o31)\n" in output
+    assert "7 (0o7): applop+ 3 (0o3), 9 (0o11)\n" in output
+    assert "8 (0o10): applop- 64 (0o100), 46 (0o56)\n" in output
+    assert "9 (0o11): applop* 17 (0o21), 24 (0o30)\n" in output
+    assert "10 (0o12): applop/ 8 (0o10), 7 (0o7)\n" in output
+    assert "11 (0o13): diepgrm" in output
+
+
+@pytest.mark.parametrize(
+    "args,expected_output",
+    [
+        pytest.param(
+            (),
+            """\
+-1 (-0o1): 14 (0o14 = '\\x0e')
+3 (0o3): 81 (0o121 = 'Q')
+4 (0o4): -22 (-0o26)
+6 (0o6): 10 (0o12 = '\\n')
+""",
+            id="all",
+        ),
+        pytest.param(
+            (2,),
+            """\
+2 (0o2): 0 (0o0 = '\\x00')
+""",
+            id="single-addr-not-set",
+        ),
+        pytest.param(
+            (3,),
+            """\
+3 (0o3): 81 (0o121 = 'Q')
+""",
+            id="single-addr-set",
+        ),
+        pytest.param(
+            (2, 5),
+            """\
+3 (0o3): 81 (0o121 = 'Q')
+4 (0o4): -22 (-0o26)
+""",
+            id="addr-range-in-range",
+        ),
+        pytest.param(
+            (7, 10),
+            "",
+            id="addr-range-not-in-range",
+        ),
+    ],
+)
+def test_show_mem(args, expected_output, capsys):
+    unicat.DEBUG.mem = {
+        -1: 14,
+        3: 81,
+        4: -22,
+        6: 10,
+    }
+    unicat.DEBUG.show_mem(*args)
+
+
 def verify_unicat(capsys, filename, expected_output):
     output = run_unicat(capsys, filename)
     if not expected_output.endswith("\n"):
