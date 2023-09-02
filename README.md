@@ -63,15 +63,13 @@ See https://docs.python.org/3/library/pdb.html for details.
 
 ```
 
-When the debugger is entered, the current instruction and a dump of the
-memory is displayed. For example:
+When the debugger is entered, the current instruction is displayed. For
+example:
 
 ```
 Current instruction:
 Address 0 (0o0): asgnlit 0 (0o0), 72 (0o110 = 'H')
-Memory:
--1 (-0o1): 0 (0o0 = '\x00')
-> .../unicat.py(167)execute_instructions()
+> ...execute_instructions()
 -> if it[0] == "diepgrm":
 ```
 
