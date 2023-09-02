@@ -65,7 +65,7 @@ class Debug:
         else:
             for address in range(start, end + 1):
                 if address in self.mem:
-                    _show_value(start, self.mem[address])
+                    _show_value(address, self.mem[address])
 
 
 def _show_value(address: int, value: int):

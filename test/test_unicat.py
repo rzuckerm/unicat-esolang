@@ -268,7 +268,7 @@ def test_debug_show_instructions(capsys):
         pytest.param(
             (),
             """\
--1 (-0o1): 14 (0o14 = '\\x0e')
+-1 (-0o1): 14 (0o16 = '\\x0e')
 3 (0o3): 81 (0o121 = 'Q')
 4 (0o4): -22 (-0o26)
 6 (0o6): 10 (0o12 = '\\n')
