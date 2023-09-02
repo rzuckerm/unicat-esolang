@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "unicat-esolang"
-version = "0.1.1"
+version = "0.1.2"
 description = "Python 3 Port of Unicat Esoteric Language. This is a fork of https://github.com/gemdude46/unicat"
 authors = ["rzuckerm"]
 license = "LICENSE.txt"

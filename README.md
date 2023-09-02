@@ -7,7 +7,8 @@
 # unicat-esolang
 
 Python 3 Port of Unicat Esoteric Language created by [gemdude64](https://github.com/gemdude46/unicat).
-See TBD for a description of the language.
+See this [Sample Programs in Every Language](https://sampleprograms.io/)
+[article](https://sampleprograms.io/languages/unicat/) for a description of the language.
 
 ## Prerequisites
 

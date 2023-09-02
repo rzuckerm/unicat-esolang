@@ -313,6 +313,9 @@ def test_show_mem(args, expected_output, capsys):
     }
     unicat.DEBUG.show_mem(*args)
 
+    output = capsys.readouterr().out
+    assert output == expected_output
+
 
 def verify_unicat(capsys, filename, expected_output):
     output = run_unicat(capsys, filename)
